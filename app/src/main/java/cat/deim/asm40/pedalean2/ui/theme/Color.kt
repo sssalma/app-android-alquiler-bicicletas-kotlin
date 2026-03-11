@@ -1,4 +1,4 @@
-package com.example.asm40.ui.theme
+package cat.deim.asm40.pedalean2.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

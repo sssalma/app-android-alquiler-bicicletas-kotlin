@@ -1,4 +1,4 @@
-package com.example.asm40
+package cat.deim.pedalean2
 
 import org.junit.Test
 

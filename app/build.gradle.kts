@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.asm40"
+    namespace = "cat.deim.asm40.pedalean2"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -12,7 +12,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.asm40"
+        applicationId = "cat.deim.asm40.pedalean2"
         minSdk = 33
         targetSdk = 36
         versionCode = 1

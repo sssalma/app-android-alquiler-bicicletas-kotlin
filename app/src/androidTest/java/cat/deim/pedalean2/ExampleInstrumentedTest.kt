@@ -1,4 +1,4 @@
-package com.example.asm40
+package cat.deim.pedalean2
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
