@@ -12,9 +12,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import cat.deim.asm40.pedalean2.ui.theme.ASM40Theme
+import com.pedalean2.common.factory.DatasourceFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        val bikeDatasource = DatasourceFactory.getInstance().createBikeDatasource()
+        val bikes = bikeDatasource.getAll()
+        val userDatasource = DatasourceFactory.getInstance().createUserDatasource()
+        val users = userDatasource.getAll()
+        val rentDatasource = DatasourceFactory.getInstance().createRentDatasource()
+        val rents = rentDatasource.getAll()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
