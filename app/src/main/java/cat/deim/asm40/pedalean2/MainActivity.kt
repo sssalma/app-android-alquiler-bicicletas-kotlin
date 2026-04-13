@@ -12,18 +12,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import cat.deim.asm40.pedalean2.ui.theme.ASM40Theme
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import cat.deim.asm40.pedalean2.presentation.Screen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             ASM40Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                val navController = rememberNavController() //para llevar registro de pantallas y navegarlas
+
+                // NavHost decide qué pantalla mostrar dentro de MainActivity (contenedor)
+                NavHost(navController = navController, startDestination = Screen.Login.route) {
+                    composable(Screen.Login.route) {
+                        LoginScreen(onLoginSuccess = {
+                            navController.navigate(Screen.BikeList.route)
+                        })
+                    }
+                    composable(Screen.BikeList.route) {
+                        Text("¡Bienvenido a la lista de bicis!")
+                    }
                 }
             }
         }
@@ -44,4 +54,9 @@ fun GreetingPreview() {
     ASM40Theme {
         Greeting("Android")
     }
+}
+
+@Composable
+fun LoginScreen(onLoginSuccess: () -> Unit) { //placeholder per lestructuracio del mainAc
+    Text("Pantalla de Login")
 }
