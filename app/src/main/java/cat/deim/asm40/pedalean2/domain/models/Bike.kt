@@ -11,6 +11,6 @@ data class Bike(
     val isReserved: Boolean,
     val latitude: Double,
     val longitude: Double,
-    val lastMaintenance: String,
-    val lastUse: String
+    val lastMaintenance: String?,
+    val lastUse: String?
 )
