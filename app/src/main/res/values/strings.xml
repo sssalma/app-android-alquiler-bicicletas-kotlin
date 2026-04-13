@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ASM40</string>
+    <string name="login_title">Pedalean2</string>
+    <string name="login_email_label">Correo electrónico</string>
+    <string name="login_password_label">Contraseña</string>
+    <string name="login_button_text">Entrar</string>
+    <string name="login_error_msg">Credenciales incorrectas. Inténtalo de nuevo.</string>
 </resources>
