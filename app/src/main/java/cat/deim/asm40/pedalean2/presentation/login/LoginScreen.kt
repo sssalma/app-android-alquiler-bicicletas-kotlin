@@ -15,6 +15,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import cat.deim.asm40.pedalean2.MainActivity // O la que sea tu pantalla principal post-login
 import cat.deim.asm40.pedalean2.R
+import cat.deim.asm40.pedalean2.presentation.bikelist.BikeListActivity
 import kotlinx.coroutines.launch
 
 @Composable
@@ -67,14 +68,11 @@ fun LoginScreen(viewModel: LoginViewModel) {
                 onClick = {
                     viewModel.performLogin(
                         onSuccess = {
-                            // 1. NAVEGACIÓN EXITOSA
-                            val intent = Intent(context, MainActivity::class.java)
+                            val intent = Intent(context, BikeListActivity::class.java)
                             context.startActivity(intent)
-                            // Opcional: Cerrar LoginActivity para que no vuelvan atrás
                             (context as? android.app.Activity)?.finish()
                         },
                         onError = {
-                            // 2. MOSTRAR ERROR (Snackbar)
                             scope.launch {
                                 snackbarHostState.showSnackbar(errorMsg)
                             }

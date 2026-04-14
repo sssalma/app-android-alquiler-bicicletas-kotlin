@@ -18,6 +18,12 @@ class LoginActivity : ComponentActivity() {
         val datasourceFactory = DatasourceFactory.getInstance() //constr. privado (singleton)
         val userDatasource = datasourceFactory.createUserDatasource()
         val userRepository = UserRepository(userDatasource) //inyecto el datasource en elrepoo
+        // TEMPORAL - borrar después
+        val users = userDatasource.getAll()
+        users.forEach { user ->
+            android.util.Log.d("TEST_LOGIN", "Email: ${user.email}")
+        }
+
         val loginUseCase = LoginUseCase(userRepository) //preparo el usecase
         //ciclo de vida del viewmodel manualmente pq necesita parámetros
         val viewModel: LoginViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
