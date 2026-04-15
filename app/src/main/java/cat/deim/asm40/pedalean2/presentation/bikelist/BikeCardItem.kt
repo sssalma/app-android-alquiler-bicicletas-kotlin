@@ -1,5 +1,6 @@
 package cat.deim.asm40.pedalean2.presentation.bikelist
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -12,11 +13,12 @@ import androidx.compose.ui.unit.dp
 import cat.deim.asm40.pedalean2.domain.models.Bike
 
 @Composable
-fun BikeCardItem(bike: Bike) {
+fun BikeCardItem(bike: Bike, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 6.dp),
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .clickable { onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(12.dp)
     ) {

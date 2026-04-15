@@ -18,7 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BikeListScreen(viewModel: BikeListViewModel, onProfileClick: () -> Unit) {
+fun BikeListScreen(viewModel: BikeListViewModel, onProfileClick: () -> Unit, onBikeClick: (String) -> Unit) {
     // StateFlow como estado de Compose
     val bikes by viewModel.bikes.collectAsState()
 
@@ -36,7 +36,10 @@ fun BikeListScreen(viewModel: BikeListViewModel, onProfileClick: () -> Unit) {
     ) { padding ->
         LazyColumn(modifier = Modifier.padding(padding)) {
             items(bikes) { bike ->
-                BikeCardItem(bike = bike)
+                BikeCardItem(
+                    bike = bike,
+                    onClick = { onBikeClick(bike.uuid) }
+                )
             }
         }
     }
