@@ -117,6 +117,18 @@ fun UserInfoCard(user: User) {
             Spacer(modifier = Modifier.height(16.dp))
             HorizontalDivider()
             Spacer(modifier = Modifier.height(12.dp))
+            Button(
+                onClick = { },
+                enabled = false,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            ) {
+                Text(text = "Edit Profile (Available in P2)")
+            }
+            Spacer(modifier = Modifier.height(12.dp))
 
             ProfileInfoRow(label = "Username", value = user.userName)
             ProfileInfoRow(label = "Phone", value = user.phoneNumber)
