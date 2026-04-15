@@ -1,12 +1,12 @@
-package cat.deim.asm40.pedalean2
+package cat.deim.asm40.pedalean2.presentation.splash
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import cat.deim.asm40.pedalean2.presentation.login.LoginActivity
-import cat.deim.asm40.pedalean2.presentation.splash.SplashScreen
 import cat.deim.asm40.pedalean2.ui.theme.ASM40Theme
+
 /**
  *Launcher Activity (Manifest modificado).
  * Esta actividad se encarga de:
