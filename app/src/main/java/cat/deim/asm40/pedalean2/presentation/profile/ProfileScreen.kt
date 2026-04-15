@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cat.deim.asm40.pedalean2.domain.models.Rent
 import cat.deim.asm40.pedalean2.domain.models.User
+import cat.deim.asm40.pedalean2.ui.theme.PedaleanYellowLight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -172,7 +173,10 @@ fun RentCardItem(rent: Rent) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = PedaleanYellowLight
+        )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -183,7 +187,8 @@ fun RentCardItem(rent: Rent) {
                 Text(
                     text = rent.bikeName,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
                 )
                 Surface(
                     shape = RoundedCornerShape(50),

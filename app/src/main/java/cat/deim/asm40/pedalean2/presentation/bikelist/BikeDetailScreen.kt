@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import cat.deim.asm40.pedalean2.ui.theme.PedaleanYellowLight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,7 +52,10 @@ fun BikeDetailScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = PedaleanYellowLight
+                    )
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(
@@ -69,7 +73,8 @@ fun BikeDetailScreen(
                                 Text(
                                     text = b.name,
                                     style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
                                 )
                             }
                             Surface(
@@ -87,19 +92,20 @@ fun BikeDetailScreen(
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
-                        HorizontalDivider()
+                        HorizontalDivider(color = Color.Black.copy(alpha = 0.1f))
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 Icons.Default.Star,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = Color.Black.copy(alpha = 0.6f)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = "${b.batteryLevel}%",
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Black
                             )
                         }
                         Spacer(modifier = Modifier.height(8.dp))
@@ -107,12 +113,13 @@ fun BikeDetailScreen(
                             Icon(
                                 Icons.Default.Place,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = Color.Black.copy(alpha = 0.6f)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = "${b.meters} m",
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Black
                             )
                         }
                         Spacer(modifier = Modifier.height(8.dp))
@@ -120,11 +127,12 @@ fun BikeDetailScreen(
                             Text(
                                 text = "Last use: ",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = Color.Black.copy(alpha = 0.6f)
                             )
                             Text(
                                 text = b.lastUse ?: "N/A",
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Black
                             )
                         }
                     }

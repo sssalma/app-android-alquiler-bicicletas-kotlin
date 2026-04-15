@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cat.deim.asm40.pedalean2.domain.models.Bike
+import cat.deim.asm40.pedalean2.ui.theme.PedaleanYellowLight
 
 @Composable
 fun BikeCardItem(bike: Bike, onClick: () -> Unit) {
@@ -20,7 +21,10 @@ fun BikeCardItem(bike: Bike, onClick: () -> Unit) {
             .padding(horizontal = 12.dp, vertical = 6.dp)
             .clickable { onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = PedaleanYellowLight
+        )
     ) {
         Row(
             modifier = Modifier
@@ -32,19 +36,20 @@ fun BikeCardItem(bike: Bike, onClick: () -> Unit) {
                 Text(
                     text = bike.name,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = bike.type,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = Color.Black.copy(alpha = 0.7f)
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "${bike.meters} m · Battery: ${bike.batteryLevel}%",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = Color.Black.copy(alpha = 0.7f)
                 )
             }
             Surface(

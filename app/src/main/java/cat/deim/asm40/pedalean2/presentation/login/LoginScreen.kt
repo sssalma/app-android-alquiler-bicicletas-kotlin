@@ -91,7 +91,7 @@ fun LoginScreen(viewModel: LoginViewModel) {
                     )
                 },
                 enabled = viewModel.isLoginEnabled(),
-                //colores: Amarillo de fondo, Negro para el texto/icono
+                //colores: Amarillo de fondo, Negro para el texto
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFFFD700),
                     contentColor = Color.Black,

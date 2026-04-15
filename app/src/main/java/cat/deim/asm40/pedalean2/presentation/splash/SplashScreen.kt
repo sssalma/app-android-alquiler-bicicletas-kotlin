@@ -27,7 +27,7 @@ fun SplashScreen(onStartClick: () -> Unit) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(Color.White), // fondo oscuro elegante
+                .background(Color.White), // fondo oscuro
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {

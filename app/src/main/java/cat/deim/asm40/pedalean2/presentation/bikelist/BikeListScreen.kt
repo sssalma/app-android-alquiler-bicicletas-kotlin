@@ -12,20 +12,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import cat.deim.asm40.pedalean2.R
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BikeListScreen(viewModel: BikeListViewModel, onProfileClick: () -> Unit, onBikeClick: (String) -> Unit) {
-    // StateFlow como estado de Compose
     val bikes by viewModel.bikes.collectAsState()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Pedalean2 - Bicis") },
+                title = {
+                    Text(text = stringResource(id = R.string.bikelist_title))
+                },
                 actions = {
                     IconButton(onClick = onProfileClick) {
                         Icon(Icons.Default.Person, contentDescription = "Perfil")

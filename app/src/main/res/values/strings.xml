@@ -5,5 +5,5 @@
     <string name="login_password_label">Contraseña</string>
     <string name="login_button_text">Entrar</string>
     <string name="login_error_msg">Credenciales incorrectas. Inténtalo de nuevo.</string>
-    <string name="bikelist_title">Nuestras bicicletas; tus bicis</string>
+    <string name="bikelist_title">Catálogo de bicicletas</string>
 </resources>
