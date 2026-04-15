@@ -46,7 +46,7 @@ fun SplashScreen(onStartClick: () -> Unit) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = "Pedalean2",
-                    color = Color(0xFFFFD700), // amarillo tipo maillot amarillo
+                    color = Color(0xFFFFD700), // amarillo
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -62,7 +62,7 @@ fun SplashScreen(onStartClick: () -> Unit) {
             Button(
                 onClick = onStartClick,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFFD700), // amarillo Tour
+                    containerColor = Color(0xFFFFD700), // amarillo
                     contentColor = Color.Black          // texto negro
                 ),
                 modifier = Modifier
