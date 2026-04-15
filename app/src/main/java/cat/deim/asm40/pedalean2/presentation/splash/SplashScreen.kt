@@ -35,7 +35,7 @@ fun SplashScreen(onStartClick: () -> Unit) {
             Spacer(modifier = Modifier.height(40.dp))
 
             Image(
-                painter = painterResource(id = R.drawable.p2_logo2),
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = "Logo",
                 modifier = Modifier
                     .height(220.dp)
