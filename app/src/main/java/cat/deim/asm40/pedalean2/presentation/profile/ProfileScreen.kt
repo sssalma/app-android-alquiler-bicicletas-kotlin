@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,7 +19,7 @@ import cat.deim.asm40.pedalean2.domain.models.User
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel) {
+fun ProfileScreen(viewModel: ProfileViewModel, onBackClick: () -> Unit) {
 
     val user by viewModel.user.collectAsState()
     val rents by viewModel.rents.collectAsState()
@@ -30,7 +31,12 @@ fun ProfileScreen(viewModel: ProfileViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Pedalean2") }
+                title = { Text("Pedalean2") },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                }
             )
         }
     ) { paddingValues ->

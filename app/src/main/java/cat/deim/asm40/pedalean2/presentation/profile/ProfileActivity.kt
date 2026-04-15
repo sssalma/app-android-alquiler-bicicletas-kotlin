@@ -10,6 +10,8 @@ import cat.deim.asm40.pedalean2.domain.usecase.GetActiveUserUseCase
 import cat.deim.asm40.pedalean2.domain.usecase.GetUserRentsUseCase
 import cat.deim.asm40.pedalean2.ui.theme.ASM40Theme
 import com.pedalean2.common.factory.DatasourceFactory
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 
 class ProfileActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +32,10 @@ class ProfileActivity : ComponentActivity() {
 
         setContent {
             ASM40Theme {
-                ProfileScreen(viewModel = viewModel)
+                ProfileScreen(
+                    viewModel = viewModel,
+                    onBackClick = { finish() }
+                )
             }
         }
     }
