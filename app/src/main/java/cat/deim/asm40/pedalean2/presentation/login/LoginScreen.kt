@@ -13,7 +13,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import cat.deim.asm40.pedalean2.MainActivity // O la que sea tu pantalla principal post-login
 import cat.deim.asm40.pedalean2.R
 import cat.deim.asm40.pedalean2.presentation.bikelist.BikeListActivity
 import kotlinx.coroutines.launch
