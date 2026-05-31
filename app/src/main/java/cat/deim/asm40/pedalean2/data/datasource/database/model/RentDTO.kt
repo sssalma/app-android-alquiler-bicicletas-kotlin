@@ -39,6 +39,15 @@ data class RentDTO(
             timeStart = rent.timeStart,
             timeEnd = rent.timeEnd
         )
+        fun fromModel(model: RentModel): RentDTO = RentDTO(
+            uuid = model.uuid,
+            bikeUuid = model.bike.uuid, bikeName = model.bike.name,
+            userEmail = model.user.email, userUsername = model.user.username,
+            userFirstName = model.user.firstName, userLastName = model.user.lastName,
+            isRented = model.isRented, rentMeters = model.rentMeters,
+            rentStartLatitude = model.rentStartLatitude, rentStartLongitude = model.rentStartLongitude,
+            rentTime = model.rentTime, timeStart = model.timeStart, timeEnd = model.timeEnd
+        )
     }
 
     fun toDomain(): Rent = Rent(

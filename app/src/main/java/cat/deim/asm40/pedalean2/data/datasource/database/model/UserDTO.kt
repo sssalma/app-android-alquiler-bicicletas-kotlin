@@ -39,6 +39,15 @@ data class UserDTO(
             creditCardExpirationDateMonth = user.creditCardExpirationDateMonth,
             creditCardExpirationDateYear = user.creditCardExpirationDateYear
         )
+        fun fromModel(model: UserModel): UserDTO = UserDTO(
+            uuid = model.uuid, name = model.name, userName = model.userName, email = model.email,
+            courseGroup = model.courseGroup, phoneNumber = model.phoneNumber, birthDate = model.birthDate,
+            isInRenting = model.isInRenting, totalRentingTime = model.totalRentingTime,
+            totalRents = model.totalRents, creditCardNumber = model.creditCardNumber,
+            creditCardCvv = model.creditCardCvv,
+            creditCardExpirationDateMonth = model.creditCardExpirationDateMonth,
+            creditCardExpirationDateYear = model.creditCardExpirationDateYear
+        )
     }
 
     fun toDomain(): User = User(

@@ -35,6 +35,13 @@ data class BikeDTO(
             lastMaintenance = bike.lastMaintenance,
             lastUse = bike.lastUse
         )
+        fun fromModel(model: BikeModel): BikeDTO = BikeDTO(
+            uuid = model.uuid, id = model.id, name = model.name, type = model.type,
+            batteryLevel = model.batteryLevel, meters = model.meters,
+            isRented = model.isRented, isReserved = model.isReserved,
+            latitude = model.latitude, longitude = model.longitude,
+            lastMaintenance = model.lastMaintenance, lastUse = model.lastUse
+        )
     }
 
     fun toDomain(): Bike = Bike(
