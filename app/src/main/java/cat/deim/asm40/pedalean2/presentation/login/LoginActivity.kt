@@ -1,40 +1,57 @@
 package cat.deim.asm40.pedalean2.presentation.login
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import cat.deim.asm40.pedalean2.data.repository.UserRepository
+import cat.deim.asm40.pedalean2.data.datasource.api.RetrofitClient
+import cat.deim.asm40.pedalean2.data.datasource.api.TokenStorage
+import cat.deim.asm40.pedalean2.data.datasource.api.UserRemoteDatasource
+import cat.deim.asm40.pedalean2.data.datasource.database.AppDatabase
+import cat.deim.asm40.pedalean2.data.datasource.database.UserLocalDatasource
 import cat.deim.asm40.pedalean2.domain.usecase.LoginUseCase
+import cat.deim.asm40.pedalean2.presentation.bikelist.BikeListActivity
 import cat.deim.asm40.pedalean2.ui.theme.ASM40Theme
-import com.pedalean2.common.factory.DatasourceFactory
 
 class LoginActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val datasourceFactory = DatasourceFactory.getInstance() //constr. privado (singleton)
-        val userDatasource = datasourceFactory.createUserDatasource()
-        val userRepository = UserRepository(userDatasource) //inyecto el datasource en elrepoo
-        // TEMPORAL - borrar después
-        val users = userDatasource.getAll()
-        users.forEach { user ->
-            android.util.Log.d("TEST_LOGIN", "Email: ${user.email}")
-        }
+        // TokenStorage: persiste los tokens JWT en SharedPreferences
+        val tokenStorage = TokenStorage(applicationContext)
+        val serverToken = RetrofitClient.SERVER_TOKEN
 
-        val loginUseCase = LoginUseCase(userRepository) //preparo el usecase
-        //ciclo de vida del viewmodel manualmente pq necesita parámetros
+
+        // Capa remota
+        val apiService = RetrofitClient.apiService
+        val userRemoteDatasource = UserRemoteDatasource(apiService, tokenStorage, serverToken)
+
+        // Capa local (Room)
+        val db = AppDatabase.getInstance(applicationContext)
+        val userLocalDatasource = UserLocalDatasource(db.userDatasource())
+
+        // UseCase y ViewModel
+        val loginUseCase = LoginUseCase(userRemoteDatasource, userLocalDatasource)
+
         val viewModel: LoginViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
                 return LoginViewModel(loginUseCase) as T
             }
         })[LoginViewModel::class.java]
 
         setContent {
-            ASM40Theme { //renderizo y vinculo la pantalla de login al viewModel
-                LoginScreen(viewModel = viewModel)
+            ASM40Theme {
+                LoginScreen(
+                    viewModel = viewModel,
+                    onLoginSuccess = {
+                        startActivity(Intent(this, BikeListActivity::class.java))
+                        finish()
+                    }
+                )
             }
         }
     }

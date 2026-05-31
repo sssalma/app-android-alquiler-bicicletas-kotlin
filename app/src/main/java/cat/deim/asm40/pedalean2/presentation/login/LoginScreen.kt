@@ -1,17 +1,12 @@
 package cat.deim.asm40.pedalean2.presentation.login
 
-import android.content.Intent
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -19,14 +14,42 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cat.deim.asm40.pedalean2.R
-import cat.deim.asm40.pedalean2.presentation.bikelist.BikeListActivity
-import kotlinx.coroutines.launch
 
+/**
+ * LoginScreen es la función composable que define la UI de la pantalla de login.
+ * Sigue el patrón MVVM con StateFlow: observa el estado del ViewModel con collectAsState()
+ * y reacciona a los cambios.
+ *
+ * @param viewModel el ViewModel que gestiona el estado y la lógica de login
+ * @param onLoginSuccess callback que la Activity ejecuta cuando el login es exitoso
+ */
 @Composable
-fun LoginScreen(viewModel: LoginViewModel) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
+fun LoginScreen(
+    viewModel: LoginViewModel,
+    onLoginSuccess: () -> Unit
+) {
+    // Observamos los StateFlow del ViewModel con collectAsState()
+    // Cada vez que cambie el valor, Compose recompone automáticamente
+    val email by viewModel.email.collectAsState()
+    val password by viewModel.password.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // Reaccionamos a los cambios de estado de la operación de login
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is LoginUiState.Success -> {
+                onLoginSuccess()
+            }
+            is LoginUiState.Error -> {
+                val msg = (uiState as LoginUiState.Error).message
+                snackbarHostState.showSnackbar(msg)
+                viewModel.resetState()
+            }
+            else -> { /* Idle o Loading: no hace falta acción */ }
+        }
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
@@ -43,9 +66,10 @@ fun LoginScreen(viewModel: LoginViewModel) {
                 painter = painterResource(id = R.drawable.p2_logo2),
                 contentDescription = "Logo Pedalean2",
                 modifier = Modifier
-                    .height(180.dp) // Un poco más pequeño que en la splash para que quepa el form
+                    .height(180.dp)
                     .padding(bottom = 24.dp)
             )
+
             Text(
                 text = stringResource(id = R.string.login_title),
                 style = MaterialTheme.typography.headlineLarge,
@@ -53,7 +77,7 @@ fun LoginScreen(viewModel: LoginViewModel) {
             )
 
             OutlinedTextField(
-                value = viewModel.email,
+                value = email,
                 onValueChange = { viewModel.onEmailChanged(it) },
                 label = { Text(stringResource(id = R.string.login_email_label)) },
                 modifier = Modifier.fillMaxWidth(),
@@ -63,7 +87,7 @@ fun LoginScreen(viewModel: LoginViewModel) {
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = viewModel.password,
+                value = password,
                 onValueChange = { viewModel.onPasswordChanged(it) },
                 label = { Text(stringResource(id = R.string.login_password_label)) },
                 visualTransformation = PasswordVisualTransformation(),
@@ -73,36 +97,28 @@ fun LoginScreen(viewModel: LoginViewModel) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            val errorMsg = stringResource(id = R.string.login_error_msg)
+            // Mostramos un indicador de carga mientras el login está en progreso
+            if (uiState is LoginUiState.Loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    color = Color(0xFFFFD700)
+                )
+            }
 
             Button(
-                onClick = {
-                    viewModel.performLogin(
-                        onSuccess = {
-                            val intent = Intent(context, BikeListActivity::class.java)
-                            context.startActivity(intent)
-                            (context as? android.app.Activity)?.finish()
-                        },
-                        onError = {
-                            scope.launch {
-                                snackbarHostState.showSnackbar(errorMsg)
-                            }
-                        }
-                    )
-                },
-                enabled = viewModel.isLoginEnabled(),
-                //colores: Amarillo de fondo, Negro para el texto
+                onClick = { viewModel.performLogin() },
+                // Deshabilitado si los campos están vacíos O si ya hay una petición en curso
+                enabled = viewModel.isLoginEnabled() && uiState !is LoginUiState.Loading,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFFFD700),
                     contentColor = Color.Black,
-                    //colores para cuando el botón esté deshabilitado
                     disabledContainerColor = Color(0xFFFFD700).copy(alpha = 0.5f),
                     disabledContentColor = Color.Black.copy(alpha = 0.5f)
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(55.dp),
-                shape = MaterialTheme.shapes.medium //redondeo
+                shape = MaterialTheme.shapes.medium
             ) {
                 Text(
                     text = stringResource(id = R.string.login_button_text),
