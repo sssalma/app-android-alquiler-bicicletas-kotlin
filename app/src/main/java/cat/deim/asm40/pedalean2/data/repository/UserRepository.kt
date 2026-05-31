@@ -5,19 +5,33 @@ import com.pedalean2.common.interfaces.IDatasource
 import cat.deim.asm40.pedalean2.domain.models.User
 import cat.deim.asm40.pedalean2.domain.repository.IUserRepository
 
-class UserRepository(private val localDatasource: IDatasource<UserModel>) : IUserRepository {
+class UserRepository(
+    private val localDatasource: IDatasource<UserModel>,
+    private val remoteDatasource: IDatasource<UserModel>
+) : IUserRepository {
 
     override fun getUserById(uuid: String): User {
-        return localDatasource.getById(uuid)?.toDomain()
+        val local = localDatasource.getById(uuid)
+        if (local != null) return local.toDomain()
+        val remote = remoteDatasource.getById(uuid)
             ?: throw Exception("User not found")
+        localDatasource.insert(remote)
+        return remote.toDomain()
     }
 
     override fun getActiveUser(): User {
-        return localDatasource.getAll().first().toDomain()
+        val locals = localDatasource.getAll()
+        if (locals.isNotEmpty()) return locals.first().toDomain()
+        val remotes = remoteDatasource.getAll()
+        if (remotes.isNotEmpty()) {
+            remotes.forEach { localDatasource.insert(it) }
+            return remotes.first().toDomain()
+        }
+        throw Exception("No active user found")
     }
 
     override fun setActiveUser(user: User) {
-        localDatasource.update(user.toModel())
+        localDatasource.insert(user.toModel())
     }
 
     override fun updateActiveUser(user: User) {
@@ -28,41 +42,23 @@ class UserRepository(private val localDatasource: IDatasource<UserModel>) : IUse
         localDatasource.delete(user.uuid)
     }
 
-    private fun UserModel.toDomain(): User {
-        return User(
-            uuid = this.uuid,
-            name = this.name,
-            userName = this.userName,
-            email = this.email,
-            courseGroup = this.courseGroup,
-            phoneNumber = this.phoneNumber,
-            birthDate = this.birthDate,
-            isInRenting = this.isInRenting,
-            totalRentingTime = this.totalRentingTime,
-            totalRents = this.totalRents,
-            creditCardNumber = this.creditCardNumber,
-            creditCardCvv = this.creditCardCvv,
-            creditCardExpirationDateMonth = this.creditCardExpirationDateMonth,
-            creditCardExpirationDateYear = this.creditCardExpirationDateYear
-        )
-    }
+    private fun UserModel.toDomain(): User = User(
+        uuid = uuid, name = name, userName = userName, email = email,
+        courseGroup = courseGroup, phoneNumber = phoneNumber, birthDate = birthDate,
+        isInRenting = isInRenting, totalRentingTime = totalRentingTime,
+        totalRents = totalRents, creditCardNumber = creditCardNumber,
+        creditCardCvv = creditCardCvv,
+        creditCardExpirationDateMonth = creditCardExpirationDateMonth,
+        creditCardExpirationDateYear = creditCardExpirationDateYear
+    )
 
-    private fun User.toModel(): UserModel {
-        return UserModel(
-            uuid = this.uuid,
-            name = this.name,
-            userName = this.userName,
-            email = this.email,
-            courseGroup = this.courseGroup,
-            phoneNumber = this.phoneNumber,
-            birthDate = this.birthDate,
-            isInRenting = this.isInRenting,
-            totalRentingTime = this.totalRentingTime,
-            totalRents = this.totalRents,
-            creditCardNumber = this.creditCardNumber,
-            creditCardCvv = this.creditCardCvv,
-            creditCardExpirationDateMonth = this.creditCardExpirationDateMonth,
-            creditCardExpirationDateYear = this.creditCardExpirationDateYear
-        )
-    }
+    private fun User.toModel(): UserModel = UserModel(
+        uuid = uuid, name = name, userName = userName, email = email,
+        courseGroup = courseGroup, phoneNumber = phoneNumber, birthDate = birthDate,
+        isInRenting = isInRenting, totalRentingTime = totalRentingTime,
+        totalRents = totalRents, creditCardNumber = creditCardNumber,
+        creditCardCvv = creditCardCvv,
+        creditCardExpirationDateMonth = creditCardExpirationDateMonth,
+        creditCardExpirationDateYear = creditCardExpirationDateYear
+    )
 }

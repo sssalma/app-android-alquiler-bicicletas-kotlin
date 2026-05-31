@@ -5,25 +5,36 @@ import com.pedalean2.common.interfaces.IDatasource
 import cat.deim.asm40.pedalean2.domain.models.Bike
 import cat.deim.asm40.pedalean2.domain.repository.IBikeRepository
 
-class BikeRepository(private val localDatasource: IDatasource<BikeModel>) : IBikeRepository {
+class BikeRepository(
+    private val localDatasource: IDatasource<BikeModel>,
+    private val remoteDatasource: IDatasource<BikeModel>
+) : IBikeRepository {
+
+    override fun getAll(): List<Bike> {
+        val locals = localDatasource.getAll()
+        if (locals.isNotEmpty()) return locals.map { it.toDomain() }
+        val remotes = remoteDatasource.getAll()
+        remotes.forEach { localDatasource.insert(it) }
+        return remotes.map { it.toDomain() }
+    }
+
+    override fun getByUuid(uuid: String): Bike? {
+        val local = localDatasource.getById(uuid)
+        if (local != null) return local.toDomain()
+        val remote = remoteDatasource.getById(uuid) ?: return null
+        localDatasource.insert(remote)
+        return remote.toDomain()
+    }
 
     override fun insertAll(bikes: List<Bike>): Int {
         var count = 0
-        bikes.forEach { bike ->
-            if (localDatasource.insert(bike.toModel())) count++
-        }
+        bikes.forEach { if (localDatasource.insert(it.toModel())) count++ }
         return count
-    }
-
-    override fun getAll(): List<Bike> {
-        return localDatasource.getAll().map { it.toDomain() }
     }
 
     override fun updateAll(bikes: List<Bike>): Int {
         var count = 0
-        bikes.forEach { bike ->
-            if (localDatasource.update(bike.toModel())) count++
-        }
+        bikes.forEach { if (localDatasource.update(it.toModel())) count++ }
         return count
     }
 
@@ -31,53 +42,23 @@ class BikeRepository(private val localDatasource: IDatasource<BikeModel>) : IBik
         return localDatasource.getAll().count { localDatasource.delete(it.uuid) }
     }
 
-    override fun insert(bike: Bike): Boolean {
-        return localDatasource.insert(bike.toModel())
-    }
+    override fun insert(bike: Bike): Boolean = localDatasource.insert(bike.toModel())
+    override fun update(bike: Bike): Boolean = localDatasource.update(bike.toModel())
+    override fun delete(uuid: String): Boolean = localDatasource.delete(uuid)
 
-    override fun getByUuid(uuid: String): Bike? {
-        return localDatasource.getById(uuid)?.toDomain()
-    }
+    private fun BikeModel.toDomain(): Bike = Bike(
+        uuid = uuid, id = id, name = name, type = type,
+        batteryLevel = batteryLevel, meters = meters,
+        isRented = isRented, isReserved = isReserved,
+        latitude = latitude, longitude = longitude,
+        lastMaintenance = lastMaintenance, lastUse = lastUse
+    )
 
-    override fun update(bike: Bike): Boolean {
-        return localDatasource.update(bike.toModel())
-    }
-
-    override fun delete(uuid: String): Boolean {
-        return localDatasource.delete(uuid)
-    }
-
-    private fun BikeModel.toDomain(): Bike {
-        return Bike(
-            uuid = this.uuid,
-            id = this.id,
-            name = this.name,
-            type = this.type,
-            batteryLevel = this.batteryLevel,
-            meters = this.meters,
-            isRented = this.isRented,
-            isReserved = this.isReserved,
-            latitude = this.latitude,
-            longitude = this.longitude,
-            lastMaintenance = this.lastMaintenance,
-            lastUse = this.lastUse
-        )
-    }
-
-    private fun Bike.toModel(): BikeModel {
-        return BikeModel(
-            uuid = this.uuid,
-            id = this.id,
-            name = this.name,
-            type = this.type,
-            batteryLevel = this.batteryLevel,
-            meters = this.meters,
-            isRented = this.isRented,
-            isReserved = this.isReserved,
-            latitude = this.latitude,
-            longitude = this.longitude,
-            lastMaintenance = this.lastMaintenance,
-            lastUse = this.lastUse
-        )
-    }
+    private fun Bike.toModel(): BikeModel = BikeModel(
+        uuid = uuid, id = id, name = name, type = type,
+        batteryLevel = batteryLevel, meters = meters,
+        isRented = isRented, isReserved = isReserved,
+        latitude = latitude, longitude = longitude,
+        lastMaintenance = lastMaintenance, lastUse = lastUse
+    )
 }
