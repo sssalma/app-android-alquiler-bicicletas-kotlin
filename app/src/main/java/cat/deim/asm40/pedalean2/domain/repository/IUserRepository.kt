@@ -1,5 +1,6 @@
 package cat.deim.asm40.pedalean2.domain.repository
 
+import cat.deim.asm40.pedalean2.domain.models.Credentials
 import cat.deim.asm40.pedalean2.domain.models.User
 
 interface IUserRepository {
@@ -40,5 +41,8 @@ interface IUserRepository {
         * @param user The user is used to verify that the user to be deleted is the active user.
         */
     fun deleteActiveUser(user: User)
+
+    /** Autentica al usuario contra el servidor y devuelve el User si las credenciales son válidas. */
+    suspend fun login(credentials: Credentials): User?
 
 }

@@ -1,5 +1,7 @@
 package cat.deim.asm40.pedalean2.data.repository
 
+import cat.deim.asm40.pedalean2.data.datasource.api.IUserRemoteDatasource
+import cat.deim.asm40.pedalean2.domain.models.Credentials
 import com.pedalean2.common.datasource.local.model.UserModel
 import com.pedalean2.common.interfaces.IDatasource
 import cat.deim.asm40.pedalean2.domain.models.User
@@ -7,7 +9,7 @@ import cat.deim.asm40.pedalean2.domain.repository.IUserRepository
 
 class UserRepository(
     private val localDatasource: IDatasource<UserModel>,
-    private val remoteDatasource: IDatasource<UserModel>
+    private val remoteDatasource: IUserRemoteDatasource
 ) : IUserRepository {
 
     override fun getUserById(uuid: String): User {
@@ -40,6 +42,14 @@ class UserRepository(
 
     override fun deleteActiveUser(user: User) {
         localDatasource.delete(user.uuid)
+    }
+
+    override suspend fun login(credentials: Credentials): User? {
+        val ok = remoteDatasource.login(credentials.email, credentials.password)
+        if (!ok) return null
+        val userModel = remoteDatasource.getAll().firstOrNull() ?: return null
+        localDatasource.insert(userModel)
+        return userModel.toDomain()
     }
 
     private fun UserModel.toDomain(): User = User(

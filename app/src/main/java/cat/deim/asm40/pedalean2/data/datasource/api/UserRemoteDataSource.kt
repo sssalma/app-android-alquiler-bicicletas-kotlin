@@ -4,16 +4,14 @@ import android.util.Log
 import cat.deim.asm40.pedalean2.data.datasource.api.model.TokenRequestApiModel
 import cat.deim.asm40.pedalean2.data.datasource.api.model.UserApiModel
 import com.pedalean2.common.datasource.local.model.UserModel
-import com.pedalean2.common.interfaces.IDatasource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-
 class UserRemoteDatasource(
     private val apiService: ApiService,
     private val tokenStorage: TokenStorage,
     private val serverToken: String
-) : IDatasource<UserModel> {
+) : IUserRemoteDatasource {
 
     override fun getAll(): List<UserModel> = runBlocking {
         withContext(Dispatchers.IO) {
@@ -36,7 +34,7 @@ class UserRemoteDatasource(
     override fun update(dataModel: UserModel): Boolean = false
     override fun delete(uuid: String): Boolean = false
 
-    suspend fun login(username: String, password: String): Boolean {
+    override suspend fun login(username: String, password: String): Boolean {
         return try {
             val response = apiService.getToken(
                 serverToken = serverToken,

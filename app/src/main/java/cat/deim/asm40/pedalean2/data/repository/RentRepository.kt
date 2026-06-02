@@ -1,5 +1,6 @@
 package cat.deim.asm40.pedalean2.data.repository
 
+import cat.deim.asm40.pedalean2.data.datasource.database.RentLocalDatasource
 import com.pedalean2.common.datasource.local.model.BikeRentModel
 import com.pedalean2.common.datasource.local.model.RentModel
 import com.pedalean2.common.datasource.local.model.UserRentModel
@@ -15,8 +16,13 @@ class RentRepository(
     override fun getAllRents(): List<Rent> {
         val locals = localDatasource.getAll()
         if (locals.isNotEmpty()) return locals.map { it.toDomain() }
+
         val remotes = remoteDatasource.getAll()
-        remotes.forEach { localDatasource.insert(it) }
+        if (remotes.isNotEmpty()) {
+            // Cacheamos en una sola operación en lugar de insertar uno a uno
+            (localDatasource as? RentLocalDatasource)?.insertAll(remotes)
+                ?: remotes.forEach { localDatasource.insert(it) }
+        }
         return remotes.map { it.toDomain() }
     }
 

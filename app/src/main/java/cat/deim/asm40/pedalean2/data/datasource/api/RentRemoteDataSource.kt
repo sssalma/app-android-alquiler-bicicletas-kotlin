@@ -38,13 +38,13 @@ class RentRemoteDatasource(
     private fun cat.deim.asm40.pedalean2.data.datasource.api.model.RentApiModel.toRentModel(): RentModel =
         RentModel(
             uuid = uuid,
-            bike = BikeRentModel(uuid = bikeUuid, name = bikeName),
+            bike = BikeRentModel(uuid = bike.uuid, name = bike.name),
             user = UserRentModel(
-                email = userEmail, username = userUsername,
-                firstName = userFirstName, lastName = userLastName
+                email = user.email, username = user.username,
+                firstName = user.firstName, lastName = user.lastName
             ),
             isRented = isRented, rentMeters = rentMeters,
-            rentStartLatitude = rentStartLatitude, rentStartLongitude = rentStartLongitude,
-            rentTime = rentTime, timeStart = timeStart, timeEnd = timeEnd
+            rentStartLatitude = rentStartLat, rentStartLongitude = rentStartLng,
+            rentTime = rentTime, timeStart = timeStart ?: "", timeEnd = timeEnd ?: ""
         )
 }

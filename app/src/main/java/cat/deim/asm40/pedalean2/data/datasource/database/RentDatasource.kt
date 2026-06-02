@@ -20,6 +20,9 @@ interface RentDatasource {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(rentDTO: RentDTO)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAll(rents: List<RentDTO>)
+
     @Update
     fun update(rentDTO: RentDTO)
 

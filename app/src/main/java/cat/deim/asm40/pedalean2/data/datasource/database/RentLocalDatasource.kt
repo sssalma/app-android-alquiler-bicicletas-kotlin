@@ -22,6 +22,12 @@ class RentLocalDatasource(private val rentDatasource: RentDatasource) : IDatasou
             true
         } catch (e: Exception) { false }
     }
+    fun insertAll(dataModels: List<RentModel>): Boolean {
+        return try {
+            rentDatasource.insertAll(dataModels.map { RentDTO.fromModel(it) })
+            true
+        } catch (e: Exception) { false }
+    }
 
     override fun update(dataModel: RentModel): Boolean {
         return try {

@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import cat.deim.asm40.pedalean2.presentation.util.toReadableDateTime
 import cat.deim.asm40.pedalean2.ui.theme.PedaleanYellowLight
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -130,7 +131,7 @@ fun BikeDetailScreen(
                                 color = Color.Black.copy(alpha = 0.6f)
                             )
                             Text(
-                                text = b.lastUse ?: "N/A",
+                                text = b.lastUse.toReadableDateTime(),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Color.Black
                             )

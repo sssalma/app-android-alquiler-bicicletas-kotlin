@@ -11,6 +11,7 @@ import cat.deim.asm40.pedalean2.data.datasource.api.TokenStorage
 import cat.deim.asm40.pedalean2.data.datasource.api.UserRemoteDatasource
 import cat.deim.asm40.pedalean2.data.datasource.database.AppDatabase
 import cat.deim.asm40.pedalean2.data.datasource.database.UserLocalDatasource
+import cat.deim.asm40.pedalean2.data.repository.UserRepository
 import cat.deim.asm40.pedalean2.domain.usecase.LoginUseCase
 import cat.deim.asm40.pedalean2.presentation.bikelist.BikeListActivity
 import cat.deim.asm40.pedalean2.ui.theme.ASM40Theme
@@ -20,21 +21,16 @@ class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // TokenStorage: persiste los tokens JWT en SharedPreferences
+        val db = AppDatabase.getInstance(applicationContext)
         val tokenStorage = TokenStorage(applicationContext)
+        val apiService = RetrofitClient.apiService
         val serverToken = RetrofitClient.SERVER_TOKEN
 
-
-        // Capa remota
-        val apiService = RetrofitClient.apiService
-        val userRemoteDatasource = UserRemoteDatasource(apiService, tokenStorage, serverToken)
-
-        // Capa local (Room)
-        val db = AppDatabase.getInstance(applicationContext)
-        val userLocalDatasource = UserLocalDatasource(db.userDatasource())
-
-        // UseCase y ViewModel
-        val loginUseCase = LoginUseCase(userRemoteDatasource, userLocalDatasource)
+        val userRepository = UserRepository(
+            localDatasource = UserLocalDatasource(db.userDatasource()),
+            remoteDatasource = UserRemoteDatasource(apiService, tokenStorage, serverToken)
+        )
+        val loginUseCase = LoginUseCase(userRepository)
 
         val viewModel: LoginViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {

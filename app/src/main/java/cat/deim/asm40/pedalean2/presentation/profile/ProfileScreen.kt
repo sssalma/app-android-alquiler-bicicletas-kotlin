@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cat.deim.asm40.pedalean2.domain.models.Rent
 import cat.deim.asm40.pedalean2.domain.models.User
+import cat.deim.asm40.pedalean2.presentation.util.toReadableDateTime
 import cat.deim.asm40.pedalean2.ui.theme.PedaleanYellowLight
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -204,8 +205,8 @@ fun RentCardItem(rent: Rent) {
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
-            ProfileInfoRow(label = "Start", value = rent.timeStart)
-            ProfileInfoRow(label = "End", value = rent.timeEnd)
+            ProfileInfoRow(label = "Start", value = rent.timeStart.toReadableDateTime())
+            ProfileInfoRow(label = "End", value = rent.timeEnd.toReadableDateTime())
             ProfileInfoRow(label = "Distance", value = "${rent.rentMeters} m")
             ProfileInfoRow(label = "Duration", value = "${rent.rentTime} min")
         }
