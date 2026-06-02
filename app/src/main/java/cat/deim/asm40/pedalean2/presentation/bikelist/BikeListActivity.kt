@@ -6,18 +6,29 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import cat.deim.asm40.pedalean2.data.datasource.api.BikeRemoteDatasource
+import cat.deim.asm40.pedalean2.data.datasource.api.RetrofitClient
+import cat.deim.asm40.pedalean2.data.datasource.api.TokenStorage
+import cat.deim.asm40.pedalean2.data.datasource.database.AppDatabase
+import cat.deim.asm40.pedalean2.data.datasource.database.BikeLocalDatasource
 import cat.deim.asm40.pedalean2.data.repository.BikeRepository
 import cat.deim.asm40.pedalean2.domain.usecase.GetAllBikesUseCase
 import cat.deim.asm40.pedalean2.presentation.profile.ProfileActivity
 import cat.deim.asm40.pedalean2.ui.theme.ASM40Theme
-import com.pedalean2.common.factory.DatasourceFactory
 
 class BikeListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val datasource = DatasourceFactory.getInstance().createBikeDatasource()
-        val repo = BikeRepository(datasource)
+        val db = AppDatabase.getInstance(applicationContext)
+        val tokenStorage = TokenStorage(applicationContext)
+        val apiService = RetrofitClient.apiService
+        val serverToken = RetrofitClient.SERVER_TOKEN
+
+        val repo = BikeRepository(
+            localDatasource = BikeLocalDatasource(db.bikeDatasource()),
+            remoteDatasource = BikeRemoteDatasource(apiService, tokenStorage, serverToken)
+        )
         val useCase = GetAllBikesUseCase(repo)
 
         val viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
@@ -31,8 +42,7 @@ class BikeListActivity : ComponentActivity() {
                 BikeListScreen(
                     viewModel = viewModel,
                     onProfileClick = {
-                        val intent = Intent(this, ProfileActivity::class.java)
-                        startActivity(intent)
+                        startActivity(Intent(this, ProfileActivity::class.java))
                     },
                     onBikeClick = { uuid ->
                         val intent = Intent(this, BikeDetailActivity::class.java)

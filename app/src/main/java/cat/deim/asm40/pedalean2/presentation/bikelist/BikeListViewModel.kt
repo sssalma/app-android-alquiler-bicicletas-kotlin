@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cat.deim.asm40.pedalean2.domain.models.Bike
 import cat.deim.asm40.pedalean2.domain.usecase.GetAllBikesUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class BikeListViewModel(
     private val getAllBikesUseCase: GetAllBikesUseCase
@@ -19,10 +21,12 @@ class BikeListViewModel(
         loadBikes()
     }
 
-    private fun loadBikes() { //llamada al UseCase
-        viewModelScope.launch {
+    private fun loadBikes() {
+        viewModelScope.launch(Dispatchers.IO) {
             val result = getAllBikesUseCase.execute()
-            _bikes.value = result
+            withContext(Dispatchers.Main) {
+                _bikes.value = result
+            }
         }
     }
 }

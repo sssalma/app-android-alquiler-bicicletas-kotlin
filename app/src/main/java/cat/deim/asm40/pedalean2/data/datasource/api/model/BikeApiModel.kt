@@ -30,4 +30,8 @@ data class BikeApiModel(
         lastMaintenance = lastMaintenance,
         lastUse = lastUse
     )
+
 }
+data class BikeApiResponse(
+    @SerializedName("bike") val bike: List<BikeApiModel>
+)

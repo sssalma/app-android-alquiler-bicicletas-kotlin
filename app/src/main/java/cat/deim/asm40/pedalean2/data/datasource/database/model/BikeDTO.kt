@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import cat.deim.asm40.pedalean2.domain.models.Bike
+import com.pedalean2.common.datasource.local.model.BikeModel
 
 @Entity(tableName = "bikes")
 data class BikeDTO(

@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import cat.deim.asm40.pedalean2.domain.models.Rent
+import com.pedalean2.common.datasource.local.model.RentModel
 
 @Entity(tableName = "rents")
 data class RentDTO(

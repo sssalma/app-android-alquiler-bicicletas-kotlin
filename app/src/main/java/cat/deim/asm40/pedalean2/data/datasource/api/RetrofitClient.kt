@@ -15,6 +15,8 @@ object RetrofitClient {
 
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
+            .followRedirects(false)
+            .followSslRedirects(false)
             .build()
 
         Retrofit.Builder()

@@ -36,7 +36,9 @@ data class RentApiModel(
         timeEnd = timeEnd
     )
 }
-
+data class RentApiResponse(
+    @SerializedName("rent") val rent: List<RentApiModel>
+)
 data class RentStartRequestApiModel(
     @SerializedName("bike_uuid") val bikeUuid: String,
     @SerializedName("latitude") val latitude: Double,

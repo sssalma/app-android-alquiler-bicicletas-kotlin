@@ -1,74 +1,50 @@
 package cat.deim.asm40.pedalean2.data.datasource.api
 
-import cat.deim.asm40.pedalean2.data.datasource.api.model.RentApiModel
-import cat.deim.asm40.pedalean2.data.datasource.api.model.RentStartRequestApiModel
-import cat.deim.asm40.pedalean2.data.datasource.api.model.RentStopRequestApiModel
-import cat.deim.asm40.pedalean2.domain.models.Rent
-
-/**
- * RentRemoteDatasource accede a los endpoints de alquiler de la API REST.
- */
+import android.util.Log
+import com.pedalean2.common.datasource.local.model.BikeRentModel
+import com.pedalean2.common.datasource.local.model.RentModel
+import com.pedalean2.common.datasource.local.model.UserRentModel
+import com.pedalean2.common.interfaces.IDatasource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 class RentRemoteDatasource(
     private val apiService: ApiService,
     private val tokenStorage: TokenStorage,
     private val serverToken: String
-) {
+) : IDatasource<RentModel> {
 
-    /**
-     * Obtiene el historial de alquileres del usuario autenticado.
-     */
-    suspend fun getRents(): List<RentApiModel> {
-        return try {
-            val bearer = tokenStorage.getBearerToken() ?: return emptyList()
-            val response = apiService.getRents(
-                serverToken = serverToken,
-                authorization = bearer
-            )
-            if (response.isSuccessful) response.body() ?: emptyList()
-            else emptyList()
-        } catch (e: Exception) {
-            emptyList()
+    override fun getAll(): List<RentModel> = runBlocking {
+        withContext(Dispatchers.IO) {
+            try {
+                val bearer = tokenStorage.getBearerToken() ?: return@withContext emptyList()
+                val response = apiService.getRents(serverToken, bearer)
+                if (response.isSuccessful) {
+                    response.body()?.rent?.map { it.toRentModel() } ?: emptyList()
+                } else emptyList()
+            } catch (e: Exception) {
+                Log.e("RentRemoteDatasource", "getAll error: ${e.message}")
+                emptyList()
+            }
         }
     }
 
-    /**
-     * Inicia un nuevo alquiler de bicicleta.
-     * @return Rent de dominio si el servidor confirma el inicio, null en caso contrario.
-     */
-    suspend fun startRent(bikeUuid: String, latitude: Double, longitude: Double): Rent? {
-        return try {
-            val bearer = tokenStorage.getBearerToken() ?: return null
-            val response = apiService.startRent(
-                serverToken = serverToken,
-                authorization = bearer,
-                request = RentStartRequestApiModel(bikeUuid, latitude, longitude)
-            )
-            if (response.isSuccessful) response.body()?.toDomain() else null
-        } catch (e: Exception) {
-            null
-        }
-    }
+    override fun getById(uuid: String): RentModel? = getAll().find { it.uuid == uuid }
 
-    /**
-     * Finaliza un alquiler activo.
-     * @return Rent de dominio si el servidor confirma la parada, null en caso contrario.
-     */
-    suspend fun stopRent(rentUuid: String, latitude: Double, longitude: Double): Rent? {
-        return try {
-            val bearer = tokenStorage.getBearerToken() ?: return null
-            val response = apiService.stopRent(
-                serverToken = serverToken,
-                authorization = bearer,
-                request = RentStopRequestApiModel(rentUuid, latitude, longitude)
-            )
-            if (response.isSuccessful) response.body()?.toDomain() else null
-        } catch (e: Exception) {
-            null
-        }
-    }
+    override fun insert(dataModel: RentModel): Boolean = false
+    override fun update(dataModel: RentModel): Boolean = false
+    override fun delete(uuid: String): Boolean = false
 
-    /**
-     * Obtiene los alquileres convertidos al modelo de dominio.
-     */
-    suspend fun getRentsDomain(): List<Rent> = getRents().map { it.toDomain() }
+    private fun cat.deim.asm40.pedalean2.data.datasource.api.model.RentApiModel.toRentModel(): RentModel =
+        RentModel(
+            uuid = uuid,
+            bike = BikeRentModel(uuid = bikeUuid, name = bikeName),
+            user = UserRentModel(
+                email = userEmail, username = userUsername,
+                firstName = userFirstName, lastName = userLastName
+            ),
+            isRented = isRented, rentMeters = rentMeters,
+            rentStartLatitude = rentStartLatitude, rentStartLongitude = rentStartLongitude,
+            rentTime = rentTime, timeStart = timeStart, timeEnd = timeEnd
+        )
 }

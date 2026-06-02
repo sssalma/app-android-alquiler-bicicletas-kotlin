@@ -6,6 +6,9 @@ import cat.deim.asm40.pedalean2.data.datasource.api.model.RentStopRequestApiMode
 import cat.deim.asm40.pedalean2.data.datasource.api.model.TokenApiModel
 import cat.deim.asm40.pedalean2.data.datasource.api.model.TokenRequestApiModel
 import cat.deim.asm40.pedalean2.data.datasource.api.model.UserApiModel
+import cat.deim.asm40.pedalean2.data.datasource.api.model.BikeApiResponse
+import cat.deim.asm40.pedalean2.data.datasource.api.model.RentApiResponse
+import cat.deim.asm40.pedalean2.data.datasource.api.model.UserApiResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -27,34 +30,33 @@ interface ApiService {
     /**
      * Obtiene la información del usuario autenticado.
      */
-    @GET("endpoints/v2/user/")
+    @GET("endpoints/v2/user")
     suspend fun getUser(
         @Header("server-token") serverToken: String,
         @Header("Authorization") authorization: String
-    ): Response<UserApiModel>
+    ): Response<UserApiResponse>
 
     /**
      * Obtiene la lista de bicicletas disponibles.
      */
-    @GET("endpoints/v2/bike/")
+    @GET("endpoints/v2/bike")
     suspend fun getBikes(
         @Header("server-token") serverToken: String,
         @Header("Authorization") authorization: String
-    ): Response<List<BikeApiModel>>
-
+    ): Response<BikeApiResponse>
     /**
      * Obtiene los alquileres anteriores del usuario.
      */
-    @GET("endpoints/v2/rent/")
+    @GET("endpoints/v2/rent")
     suspend fun getRents(
         @Header("server-token") serverToken: String,
         @Header("Authorization") authorization: String
-    ): Response<List<RentApiModel>>
+    ): Response<RentApiResponse>
 
     /**
      * Inicia un alquiler de bicicleta.
      */
-    @POST("endpoints/v2/rent/start/")
+    @POST("endpoints/v2/rent/start")
     suspend fun startRent(
         @Header("server-token") serverToken: String,
         @Header("Authorization") authorization: String,
@@ -64,7 +66,7 @@ interface ApiService {
     /**
      * Finaliza un alquiler de bicicleta activo.
      */
-    @POST("endpoints/v2/rent/stop/")
+    @POST("endpoints/v2/rent/stop")
     suspend fun stopRent(
         @Header("server-token") serverToken: String,
         @Header("Authorization") authorization: String,
