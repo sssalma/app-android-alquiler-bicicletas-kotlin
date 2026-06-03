@@ -1,5 +1,6 @@
 package cat.deim.asm40.pedalean2.data.repository
 
+import cat.deim.asm40.pedalean2.data.datasource.api.IRentRemoteDatasource
 import cat.deim.asm40.pedalean2.data.datasource.database.RentLocalDatasource
 import com.pedalean2.common.datasource.local.model.BikeRentModel
 import com.pedalean2.common.datasource.local.model.RentModel
@@ -10,20 +11,23 @@ import cat.deim.asm40.pedalean2.domain.repository.IRentRepository
 
 class RentRepository(
     private val localDatasource: IDatasource<RentModel>,
-    private val remoteDatasource: IDatasource<RentModel>
+    private val remoteDatasource: IRentRemoteDatasource
 ) : IRentRepository {
 
     override fun getAllRents(): List<Rent> {
-        val locals = localDatasource.getAll()
-        if (locals.isNotEmpty()) return locals.map { it.toDomain() }
-
-        val remotes = remoteDatasource.getAll()
-        if (remotes.isNotEmpty()) {
-            // Cacheamos en una sola operación en lugar de insertar uno a uno
-            (localDatasource as? RentLocalDatasource)?.insertAll(remotes)
-                ?: remotes.forEach { localDatasource.insert(it) }
+        return try {
+            val remotes = remoteDatasource.getAll()
+            if (remotes.isNotEmpty()) {
+                localDatasource.getAll().forEach { localDatasource.delete(it.uuid) }
+                (localDatasource as? RentLocalDatasource)?.insertAll(remotes)
+                    ?: remotes.forEach { localDatasource.insert(it) }
+                remotes.map { it.toDomain() }
+            } else {
+                localDatasource.getAll().map { it.toDomain() }
+            }
+        } catch (e: Exception) {
+            localDatasource.getAll().map { it.toDomain() }
         }
-        return remotes.map { it.toDomain() }
     }
 
     override fun getRentByUuid(uuid: String): Rent? {
@@ -65,7 +69,11 @@ class RentRepository(
     override fun deleteAllRents(): Int {
         return localDatasource.getAll().count { localDatasource.delete(it.uuid) }
     }
+    override suspend fun startRent(bikeUuid: String, latitude: Double, longitude: Double): Boolean =
+        remoteDatasource.startRent(bikeUuid, latitude, longitude)
 
+    override suspend fun stopRent(bikeUuid: String, latitude: Double, longitude: Double): Boolean =
+        remoteDatasource.stopRent(bikeUuid, latitude, longitude)
     private fun RentModel.toDomain(): Rent = Rent(
         uuid = uuid,
         bikeUuid = bike.uuid, bikeName = bike.name,

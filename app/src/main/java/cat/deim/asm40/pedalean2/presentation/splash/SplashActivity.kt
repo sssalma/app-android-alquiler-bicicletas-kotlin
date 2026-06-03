@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import cat.deim.asm40.pedalean2.data.datasource.api.RetrofitClient
 import cat.deim.asm40.pedalean2.data.datasource.api.TokenStorage // <-- Añadido el import
 import cat.deim.asm40.pedalean2.presentation.bikelist.BikeListActivity // <-- Añadido el import
 import cat.deim.asm40.pedalean2.presentation.login.LoginActivity
@@ -20,6 +21,7 @@ class SplashActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        RetrofitClient.init(TokenStorage(applicationContext))
 
         // Instanciamos el TokenStorage pasando el contexto de la Activity
         val tokenStorage = TokenStorage(this)

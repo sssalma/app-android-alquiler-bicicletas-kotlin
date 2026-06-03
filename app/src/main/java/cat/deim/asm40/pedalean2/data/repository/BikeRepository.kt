@@ -11,21 +11,36 @@ class BikeRepository(
 ) : IBikeRepository {
 
     override fun getAll(): List<Bike> {
-        val locals = localDatasource.getAll()
-        if (locals.isNotEmpty()) return locals.map { it.toDomain() }
-        val remotes = remoteDatasource.getAll()
-        remotes.forEach { localDatasource.insert(it) }
-        return remotes.map { it.toDomain() }
+        return try {
+            // Red disponible: el remoto manda. Traemos lo fresco y actualizamos la cache.
+            val remotes = remoteDatasource.getAll()
+            if (remotes.isNotEmpty()) {
+                localDatasource.getAll().forEach { localDatasource.delete(it.uuid) }
+                remotes.forEach { localDatasource.insert(it) }
+                remotes.map { it.toDomain() }
+            } else {
+                // Remoto vacío (p. ej. error de red): caemos a la cache local
+                localDatasource.getAll().map { it.toDomain() }
+            }
+        } catch (e: Exception) {
+            // Sin red: respaldo local
+            localDatasource.getAll().map { it.toDomain() }
+        }
     }
 
     override fun getByUuid(uuid: String): Bike? {
-        val local = localDatasource.getById(uuid)
-        if (local != null) return local.toDomain()
-        val remote = remoteDatasource.getById(uuid) ?: return null
-        localDatasource.insert(remote)
-        return remote.toDomain()
+        return try {
+            val remote = remoteDatasource.getById(uuid)
+            if (remote != null) {
+                localDatasource.insert(remote)   // actualiza/inserta el registro fresco
+                remote.toDomain()
+            } else {
+                localDatasource.getById(uuid)?.toDomain()
+            }
+        } catch (e: Exception) {
+            localDatasource.getById(uuid)?.toDomain()
+        }
     }
-
     override fun insertAll(bikes: List<Bike>): Int {
         var count = 0
         bikes.forEach { if (localDatasource.insert(it.toModel())) count++ }

@@ -23,6 +23,9 @@ interface IRentRepository {
     /** Deletes the rent with the given uuid. Returns true if the rent was deleted, false otherwise.*/
     fun deleteRent(uuid: String): Boolean
 
+    suspend fun startRent(bikeUuid: String, latitude: Double, longitude: Double): Boolean
+    suspend fun stopRent(bikeUuid: String, latitude: Double, longitude: Double): Boolean
+
     /** Returns true if the rent with the given uuid is active, false otherwise.*/
     fun isRentActive(uuid: String): Boolean
 }

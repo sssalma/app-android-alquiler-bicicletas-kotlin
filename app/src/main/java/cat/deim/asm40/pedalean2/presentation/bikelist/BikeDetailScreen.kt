@@ -1,5 +1,7 @@
 package cat.deim.asm40.pedalean2.presentation.bikelist
 
+import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -11,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cat.deim.asm40.pedalean2.presentation.util.toReadableDateTime
@@ -23,6 +26,18 @@ fun BikeDetailScreen(
     onBackClick: () -> Unit
 ) {
     val bike by viewModel.bike.collectAsState()
+
+    // NUEVO: Variables para mostrar los mensajes de Toast
+    val message by viewModel.message.collectAsState()
+    val context = LocalContext.current
+
+    // NUEVO: Escuchador para mostrar el Toast cuando el mensaje cambie
+    LaunchedEffect(message) {
+        message?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            viewModel.clearMessage()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -78,7 +93,10 @@ fun BikeDetailScreen(
                                     color = Color.Black
                                 )
                             }
+
+                            // NUEVO: Surface ahora es clickable y llama a toggleRent
                             Surface(
+                                onClick = { viewModel.toggleRent(b) },
                                 shape = RoundedCornerShape(50),
                                 color = if (!b.isRented) Color(0xFF4CAF50) else Color(0xFFE53935)
                             ) {

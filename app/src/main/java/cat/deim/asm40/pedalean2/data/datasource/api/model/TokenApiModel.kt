@@ -12,3 +12,10 @@ data class TokenRequestApiModel(
     @SerializedName("username") val username: String,
     @SerializedName("password") val password: String
 )
+data class RefreshRequestApiModel(
+    @SerializedName("refresh") val refresh: String
+)
+
+data class RefreshApiModel(
+    @SerializedName("access") val access: String
+)

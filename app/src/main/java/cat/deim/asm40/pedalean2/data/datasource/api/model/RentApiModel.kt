@@ -56,7 +56,7 @@ data class RentStartRequestApiModel(
 )
 
 data class RentStopRequestApiModel(
-    @SerializedName("rent_uuid") val rentUuid: String,
+    @SerializedName("bike_uuid") val bikeUuid: String,
     @SerializedName("latitude") val latitude: Double,
     @SerializedName("longitude") val longitude: Double
 )

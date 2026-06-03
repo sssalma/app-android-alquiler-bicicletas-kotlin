@@ -7,8 +7,11 @@ import cat.deim.asm40.pedalean2.data.datasource.api.model.TokenApiModel
 import cat.deim.asm40.pedalean2.data.datasource.api.model.TokenRequestApiModel
 import cat.deim.asm40.pedalean2.data.datasource.api.model.UserApiModel
 import cat.deim.asm40.pedalean2.data.datasource.api.model.BikeApiResponse
+import cat.deim.asm40.pedalean2.data.datasource.api.model.RefreshApiModel
+import cat.deim.asm40.pedalean2.data.datasource.api.model.RefreshRequestApiModel
 import cat.deim.asm40.pedalean2.data.datasource.api.model.RentApiResponse
 import cat.deim.asm40.pedalean2.data.datasource.api.model.UserApiResponse
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -61,7 +64,7 @@ interface ApiService {
         @Header("server-token") serverToken: String,
         @Header("Authorization") authorization: String,
         @Body request: RentStartRequestApiModel
-    ): Response<RentApiModel>
+    ): Response<ResponseBody>
 
     /**
      * Finaliza un alquiler de bicicleta activo.
@@ -71,5 +74,11 @@ interface ApiService {
         @Header("server-token") serverToken: String,
         @Header("Authorization") authorization: String,
         @Body request: RentStopRequestApiModel
-    ): Response<RentApiModel>
+    ): Response<ResponseBody>
+
+    @POST("endpoints/v2/token/refresh/")
+    suspend fun refreshToken(
+        @Header("server-token") serverToken: String,
+        @Body request: RefreshRequestApiModel
+    ): Response<RefreshApiModel>
 }

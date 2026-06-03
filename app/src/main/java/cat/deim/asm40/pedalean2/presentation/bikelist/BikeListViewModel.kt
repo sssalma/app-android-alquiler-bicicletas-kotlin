@@ -21,7 +21,7 @@ class BikeListViewModel(
         loadBikes()
     }
 
-    private fun loadBikes() {
+    fun loadBikes() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = getAllBikesUseCase.execute()
             withContext(Dispatchers.Main) {
