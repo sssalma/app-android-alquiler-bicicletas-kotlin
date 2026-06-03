@@ -6,6 +6,7 @@ import cat.deim.asm40.pedalean2.domain.models.Rent
 import cat.deim.asm40.pedalean2.domain.models.User
 import cat.deim.asm40.pedalean2.domain.usecase.GetActiveUserUseCase
 import cat.deim.asm40.pedalean2.domain.usecase.GetUserRentsUseCase
+import cat.deim.asm40.pedalean2.domain.usecase.UpdateUserUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +15,8 @@ import kotlinx.coroutines.withContext
 
 class ProfileViewModel(
     private val getActiveUserUseCase: GetActiveUserUseCase,
-    private val getUserRentsUseCase: GetUserRentsUseCase
+    private val getUserRentsUseCase: GetUserRentsUseCase,
+    private val updateUserUseCase: UpdateUserUseCase
 ) : ViewModel() {
 
     private val _user = MutableStateFlow<User?>(null)
@@ -31,6 +33,13 @@ class ProfileViewModel(
                 _user.value = userResult
                 _rents.value = rentsResult
             }
+        }
+    }
+
+    fun updateUser(updated: User) {
+        viewModelScope.launch(Dispatchers.IO) {
+            updateUserUseCase.execute(updated)          // persiste en Room
+            withContext(Dispatchers.Main) { _user.value = updated }   // refresca la UI
         }
     }
 }

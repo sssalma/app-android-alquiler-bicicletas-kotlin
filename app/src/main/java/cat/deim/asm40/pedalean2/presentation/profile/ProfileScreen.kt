@@ -18,6 +18,7 @@ import cat.deim.asm40.pedalean2.domain.models.Rent
 import cat.deim.asm40.pedalean2.domain.models.User
 import cat.deim.asm40.pedalean2.presentation.util.toReadableDateTime
 import cat.deim.asm40.pedalean2.ui.theme.PedaleanYellowLight
+import androidx.compose.material3.AlertDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,6 +26,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, onBackClick: () -> Unit) {
 
     val user by viewModel.user.collectAsState()
     val rents by viewModel.rents.collectAsState()
+    var showEditDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.loadData()
@@ -42,6 +44,45 @@ fun ProfileScreen(viewModel: ProfileViewModel, onBackClick: () -> Unit) {
             )
         }
     ) { paddingValues ->
+
+        if (showEditDialog) {
+            user?.let { current ->
+                var name by remember { mutableStateOf(current.name) }
+                var phone by remember { mutableStateOf(current.phoneNumber) }
+
+                AlertDialog(
+                    onDismissRequest = { showEditDialog = false },
+                    title = { Text("Editar perfil") },
+                    text = {
+                        Column {
+                            OutlinedTextField(
+                                value = name,
+                                onValueChange = { name = it },
+                                label = { Text("Nombre") },
+                                singleLine = true
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            OutlinedTextField(
+                                value = phone,
+                                onValueChange = { phone = it },
+                                label = { Text("Teléfono") },
+                                singleLine = true
+                            )
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            viewModel.updateUser(current.copy(name = name, phoneNumber = phone))
+                            showEditDialog = false
+                        }) { Text("Guardar") }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showEditDialog = false }) { Text("Cancelar") }
+                    }
+                )
+            }
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -58,9 +99,9 @@ fun ProfileScreen(viewModel: ProfileViewModel, onBackClick: () -> Unit) {
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            user?.let { u ->
+            user?.let { current ->
                 item {
-                    UserInfoCard(user = u)
+                    UserInfoCard(user = current, onEditClick = { showEditDialog = true })
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
@@ -83,7 +124,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, onBackClick: () -> Unit) {
 }
 
 @Composable
-fun UserInfoCard(user: User) {
+fun UserInfoCard(user: User, onEditClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
@@ -126,15 +167,10 @@ fun UserInfoCard(user: User) {
             HorizontalDivider()
             Spacer(modifier = Modifier.height(12.dp))
             Button(
-                onClick = { },
-                enabled = false,
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                onClick = onEditClick,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Edit Profile (Available in P2)")
+                Text(text = "Edit Profile")
             }
             Spacer(modifier = Modifier.height(12.dp))
 

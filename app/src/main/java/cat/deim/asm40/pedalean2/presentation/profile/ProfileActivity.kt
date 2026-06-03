@@ -15,6 +15,7 @@ import cat.deim.asm40.pedalean2.data.repository.RentRepository
 import cat.deim.asm40.pedalean2.data.repository.UserRepository
 import cat.deim.asm40.pedalean2.domain.usecase.GetActiveUserUseCase
 import cat.deim.asm40.pedalean2.domain.usecase.GetUserRentsUseCase
+import cat.deim.asm40.pedalean2.domain.usecase.UpdateUserUseCase
 import cat.deim.asm40.pedalean2.ui.theme.ASM40Theme
 
 class ProfileActivity : ComponentActivity() {
@@ -38,7 +39,8 @@ class ProfileActivity : ComponentActivity() {
 
         val viewModel = ProfileViewModel(
             getActiveUserUseCase = GetActiveUserUseCase(userRepository),
-            getUserRentsUseCase = GetUserRentsUseCase(rentRepository)
+            getUserRentsUseCase = GetUserRentsUseCase(rentRepository),
+            updateUserUseCase = UpdateUserUseCase(userRepository)
         )
 
         setContent {
