@@ -14,3 +14,7 @@
 .cxx
 local.properties
 gradle.properties
+
+# Configuración local del IDE — no debe versionarse
+/.idea/
+.kotlin/
